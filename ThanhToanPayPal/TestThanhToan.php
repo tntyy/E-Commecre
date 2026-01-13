@@ -3,8 +3,17 @@ session_start();
 require_once __DIR__ . '/../conn/connect.php';
 $db = Database::getInstance();
 
-$total = $_SESSION['cart_total'] ?? 0;
-$usd_amount = round($total / 25000, 2); // quy đổi sang USD
+$orderId = $_SESSION['order_id'] ?? 0;
+if ($orderId <= 0) {
+    echo "Đơn hàng không hợp lệ";
+    exit;
+}
+
+$stmt = $db->prepare("SELECT totalprice FROM orders WHERE id = ?");
+$stmt->execute([$orderId]);
+$total = $stmt->fetchColumn();
+
+$usd_amount = number_format($total / 25000, 2, '.', '');
 
 include '../template/header.php';
 include '../template/nav.php';
@@ -56,20 +65,34 @@ form input[type="submit"]:hover {
 
 <fieldset>
   <legend>Thanh toán qua cổng PayPal</legend>
+  <div style="text-align:center; margin-bottom:20px;">
+    <p style="font-size:16px;">
+        <strong>Tổng tiền (VNĐ):</strong>
+        <?= number_format($total, 0, ',', '.') ?> đ
+    </p>
+    <p style="font-size:18px; color:#0070ba;">
+        <strong>Thanh toán PayPal (USD):</strong>
+        $<?= $usd_amount ?>
+    </p>
+</div>
   <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
     <input type="hidden" name="business" value="sb-0z12f48367938@business.example.com">
     <input type="hidden" name="cmd" value="_xclick">
+
     <input type="hidden" name="item_name" value="HoaDonMuaHang">
+    <!-- 🔥 QUAN TRỌNG -->
+    <input type="hidden" name="custom" value="<?= $orderId ?>">
 
-    <label for="amount">Nhập số tiền hóa đơn :</label>
-    <input type="number" id="amount" name="amount" value="<?php echo $usd_amount; ?>" readonly>
-
+    <input type="hidden" name="amount" value="<?= $usd_amount ?>">
     <input type="hidden" name="currency_code" value="USD">
-    <input type="hidden" name="return" value="http://localhost/E-Commerce/thanhcong.php">
+
+    <input type="hidden" name="return" value="http://localhost/E-Commerce/ThanhToanPayPal/thanhcong.php">
     <input type="hidden" name="cancel_return" value="http://localhost/E-Commerce/loi.php">
 
-    <input type="submit" name="submit" value="Thanh toán qua Paypal">
-  </form>
+    <input type="submit" value="Thanh toán PayPal">
+</form>
+
+
 </fieldset>
 
 <?php

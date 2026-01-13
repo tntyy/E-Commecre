@@ -18,10 +18,25 @@
         /* FONT */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 body {
+    display: flex;
     font-family: 'Poppins', sans-serif;
+    flex-direction: column;
     background: #f5f7fa;
 }
+
+/* Nội dung chính */
+.main-content {
+    flex: 1;
+    padding: 40px 0 60px; /* tạo khoảng thở */
+}
+
 
 /* ========== HEADER MERCEDES ========== */
 header {
@@ -43,6 +58,7 @@ header .subtitle {
     font-size: 13px;
     color: #ccc;
 }
+
 
 /* ========== MENU MERCEDES ========== */
 .menu-wrap {

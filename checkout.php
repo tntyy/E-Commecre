@@ -7,6 +7,14 @@ if(!isset($_SESSION['customer']) || empty($_SESSION['customer'])){
     header("Location: login.php");
     exit;
 }
+if (!isset($_POST['checkout_items']) || empty($_POST['checkout_items'])) {
+    header("Location: .php");
+    exit;
+}
+
+$selectedItems = $_POST['checkout_items'];
+$_SESSION['selected_items'] = $selectedItems; 
+$cart = $_SESSION['cart'];
 
 $uid = $_SESSION['customerid'];
 $total = 0;
@@ -18,7 +26,9 @@ if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])){
     $cart = $_SESSION['cart'];
 
     // Tính toán tổng tiền
-    foreach ($cart as $id => $quantity){
+    foreach ($selectedItems as $id){
+        if (!isset($cart[$id])) continue;
+        $quantity = $cart[$id];
         $stmt = $connection->prepare("SELECT * FROM products WHERE id = ?");
         $stmt->execute([$id]);
         $row_product = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -62,32 +72,76 @@ if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])){
             }
 
             if ($res_meta) {
-                // Lưu đơn hàng vào bảng orders (Thêm đoạn này nếu bạn chưa có)
-                $stmt_order = $connection->prepare("INSERT INTO orders(uid, totalprice, paymentmode, orderstatus) VALUES(?, ?, ?, ?)");
-                $res_order = $stmt_order->execute([$uid, $total, $payment, 'Order placed']);
 
+               
+                    $stmt_order = $connection->prepare(
+                        "INSERT INTO orders(uid, totalprice, paymentmode, orderstatus)
+                        VALUES(?, ?, ?, ?)"
+                    );
+                    $res_order = $stmt_order->execute([
+                        $uid,
+                        $total,
+                        $method,
+                        'Order placed'
+                    ]);
+                
                 if ($res_order) {
                     $orderid = $connection->lastInsertId(); 
-                    foreach ($cart as $id => $quantity) {
+                    foreach ($selectedItems as $id) {   // ✅ CHỈ ITEM ĐƯỢC CHECK
+
+                        if (!isset($cart[$id])) continue;
+
+                        $quantity = $cart[$id];
+
                         $stmt_p = $connection->prepare("SELECT price FROM products WHERE id = ?");
                         $stmt_p->execute([$id]);
                         $price = $stmt_p->fetchColumn();
-                        
-                        $stmt_item = $connection->prepare("INSERT INTO orderitems(pid, pquantity, orderid, productprice) VALUES(?,?,?,?)");
-                        $stmt_item->execute([$id, $quantity, $orderid, $price]);
-                    }
-                }
 
-                // Xử lý theo phương thức thanh toán
-                if ($method === 'paypal') {
-                    // Không unset giỏ hàng ở đây, chờ PayPal trả về thành công mới xoá
-                    header("Location: ThanhToanPayPal/TestThanhToan.php");
-                    exit;
-                } else if ($method === 'cod') {
+                        $stmt_item = $connection->prepare("
+                            INSERT INTO orderitems(pid, pquantity, orderid, productprice)  
+                            VALUES(?,?,?,?)
+                        "); 
+                        $stmt_item->execute([
+                            $id,
+                            $quantity,
+                            $orderid,
+                            $price
+                        ]); 
+                    }
+
+                    $_SESSION['order_id'] = $orderid; // Lưu order ID vào session để sử dụng sau này
+                    // xu lý tiếp theo dựa trên phương thức thanh toán
+
+                    // XỬ LÝ THEO PHƯƠNG THỨC THANH TOÁN
+                if ($method === 'cod') {
+
+                    $_SESSION['payment_mode'] = 'cod';
+                    $_SESSION['order_id'] = $orderid;
+
+                    // COD → xong luôn
+                   foreach ($selectedItems as $id) {
+                        unset($_SESSION['cart'][$id]);
+                    }
+
                     header("Location: ThanhToanPayPal/thanhcong.php");
                     exit;
                 }
 
+                if ($method === 'paypal') {
+
+                    // PAYPAL → KHÔNG XOÁ CART Ở ĐÂY
+                    $_SESSION['payment_mode'] = 'paypal';
+                    $_SESSION['order_id'] = $orderid;
+                    $_SESSION['paypal_total'] = $total;
+
+                    header("Location: ThanhToanPayPal/TestThanhToan.php");
+                    exit;
+                }
+
+                    
+                }
+
+               
             }
         }
     }
@@ -170,6 +224,10 @@ include('template/nav.php');
 <div class="content">
     <div class="container">
         <form method="post">
+            <?php foreach ($selectedItems as $id): ?>
+                <input type="hidden" name="checkout_items[]" value="<?= $id ?>">
+            <?php endforeach; ?>
+
             <div class="row">
                 <div class="col-md-7">
                     <div class="checkout-card">
@@ -188,43 +246,43 @@ include('template/nav.php');
                         <div class="row mt-3" style="margin-top: 15px;">
                             <div class="col-md-6">
                                 <label>First Name</label>
-                                <input class="form-control" type="text" name="fname" placeholder="John">
+                                <input class="form-control" type="text" name="fname" placeholder="John" required>
                             </div>
                             <div class="col-md-6">
                                 <label>Last Name</label>
-                                <input class="form-control" type="text" name="lname" placeholder="Doe">
+                                <input class="form-control" type="text" name="lname" placeholder="Doe" required>
                             </div>
                         </div>
 
                         <div class="mt-3" style="margin-top: 15px;">
                             <label>Company (Optional)</label>
-                            <input type="text" class="form-control" name="company">
+                            <input type="text" class="form-control" name="company" required>
                         </div>
 
                         <div class="mt-3" style="margin-top: 15px;">
                             <label>Address</label>
-                            <input type="text" class="form-control" name="address1" placeholder="Street address">
-                            <input type="text" class="form-control mt-2" name="address2" placeholder="Apartment, suite, unit etc. (optional)" style="margin-top: 10px;">
+                            <input type="text" class="form-control" name="address1" placeholder="Street address" required>
+                            <input type="text" class="form-control mt-2" name="address2" placeholder="Apartment, suite, unit etc. (optional)" style="margin-top: 10px;" required>
                         </div>
 
                         <div class="row mt-3" style="margin-top: 15px;">
                             <div class="col-md-4">
                                 <label>City</label>
-                                <input class="form-control" type="text" name="city">
+                                <input class="form-control" type="text" name="city" required>
                             </div>
                             <div class="col-md-4">
                                 <label>State</label>
-                                <input class="form-control" type="text" name="state">
+                                <input class="form-control" type="text" name="state" required>
                             </div>
                             <div class="col-md-4">
                                 <label>Postcode</label>
-                                <input class="form-control" type="text" name="zipcode">
+                                <input class="form-control" type="text" min="1" step="1" required name="zipcode" required>
                             </div>
                         </div>
 
                         <div class="mt-3" style="margin-top: 15px;">
                             <label>Phone Number</label>
-                            <input type="text" class="form-control" name="phone">
+                            <input type="text" class="form-control" inputmode="numeric" pattern="[0-9]{10,}" minlength="10" name="phone">
                         </div>
                     </div>
                 </div>

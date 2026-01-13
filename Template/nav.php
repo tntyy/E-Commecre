@@ -1,8 +1,14 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/../conn/connect.php';
 $db = Database::getInstance();
 
-$sql = "SELECT * FROM category";
+function brandKey($name) {
+    return strtolower(str_replace(' ', '', $name));}
+
+$sql = "SELECT id, name FROM category";
 $stmt = $db->prepare($sql);
 $stmt->execute();
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -11,31 +17,8 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     /* FONT */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #f5f7fa;
-}
 
-/* ========== HEADER MERCEDES ========== */
-header {
-    background: #111;
-    color: white;
-    padding: 18px 0;
-    border-bottom: 3px solid #ffcc00;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.35);
-}
 
-header h1 {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #ffcc00;
-}
-
-header .subtitle {
-    font-size: 13px;
-    color: #ccc;
-}
 
 /* ========== MENU MERCEDES ========== */
 .menu-wrap {
@@ -135,8 +118,8 @@ header .subtitle {
             <li class="dropdown2">
                 <a href="products.php"><i class="fa-solid fa-car"></i> Cars</a>
                 <div class="dropdown-content2">
-                    <?php foreach($categories as $c): ?>
-                        <a href="index.php?id=<?= $c['id'] ?>">
+                    <?php foreach ($categories as $c): ?>
+                        <a href="cate.php?brand=<?= brandKey($c['name']) ?>">
                             <i class="fa-solid fa-angles-right"></i>
                             <?= htmlspecialchars($c['name']) ?>
                         </a>
@@ -144,31 +127,30 @@ header .subtitle {
                 </div>
             </li>
 
-            <!-- MY ACCOUNT -->
-            <li class="dropdown2">
-                <a href="#"><i class="fa-solid fa-user"></i> My Account</a>
-                <div class="dropdown-content2">
-                    <a href="my_orders.php"><i class="fa-solid fa-receipt"></i> My Orders</a>
-                    <a href="my_wishlist.php"><i class="fa-solid fa-heart"></i> Wishlist</a>
-                    <a href="edit_profile.php"><i class="fa-solid fa-pen"></i> Edit Profile</a>
-                    <a href="#"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-                </div>
-            </li>
 
-            <!-- LOGIN -->
-            <li>
-                <a href="login.php"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
-            </li>
+            <?php if (isset($_SESSION['customer'])): ?>
+                <li class="dropdown2">
+                    <a href="#">
+                        <i class="fa-solid fa-user"></i>
+                        <?= htmlspecialchars($_SESSION['customer']) ?>
+                    </a>
+                    <div class="dropdown-content2">
+                        <a href="my_orders.php"><i class="fa-solid fa-receipt"></i> My Orders</a>
+                        <a href="my_wishlist.php"><i class="fa-solid fa-heart"></i> Wishlist</a>
+                        <a href="edit_profile.php"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+                        <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                    </div>
+                </li>
+            <?php else: ?>
+                <li><a href="login.php">Login</a></li>
+                <li><a href="sign_up.php">Register</a></li>
+            <?php endif; ?>
 
-            <!-- REGISTER -->
-            <li>
-                <a href="register.php"><i class="fa-solid fa-user-plus"></i> Register</a>
-            </li>
 
             <!-- CART -->
             <li>
                 <a href="cart.php">
-                    <i class="fa-solid fa-cart-shopping"></i> Cart
+                    <i class="fa-solid fa-cart-shopping"></i> Check Out
                 </a>
             </li>
 

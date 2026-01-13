@@ -6,7 +6,7 @@
     color: #e6e6e6;
     padding: 50px 0 20px;
     font-family: 'Poppins', sans-serif;
-    margin-top: 50px;
+    margin-top: 400px;
     box-shadow: 0 -4px 25px rgba(0,0,0,0.4);
 }
 
@@ -58,6 +58,7 @@
     font-size: 14px;
     color: #b5b5b5;
 }
+
 
 </style>
 <footer class="merc-footer">
