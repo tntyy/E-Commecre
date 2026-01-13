@@ -408,7 +408,7 @@ if ($category_id > 0) {
       <div class="d-flex align-items-center">
         <img src="images/logo.jpg" alt="logo" width="110" style="margin-right:16px">
         <div>
-          <h1 style="margin:0; font-size:46px; letter-spacing:1px;">MERCEDES SHOWROOM</h1>
+          <h1 style="margin:0; font-size:46px; letter-spacing:1px;">SHOWROOM NGOC TY</h1>
           <div style="font-size:13px; color:#666">Xe sang – Bảo hành chính hãng</div>
         </div>
       </div>
@@ -542,7 +542,7 @@ if ($category_id > 0) {
 
             <!-- Cột 1 -->
             <div class="footer-col">
-                <h3>MERCEDES SHOWROOM</h3>
+                <h3>SHOWROOM NGOC TY</h3>
                 <p>Xe sang – Bảo hành chính hãng</p>
                 <p><i class="fa-solid fa-location-dot"></i>Vĩnh Long, Quốc Lộ 1A, Trường đại học Cữu Long</p>
                 <p><i class="fa-solid fa-phone"></i> 0909 999 888</p>
@@ -572,7 +572,7 @@ if ($category_id > 0) {
         </div>
 
         <div class="footer-bottom">
-            © 2025 Mercedes Showroom - All rights reserved.
+            © 2025 Showroom NGOC TY - All rights reserved.
         </div>
         
     </div>

@@ -24,7 +24,7 @@ $stmt->execute([$orderId, $uid]);
 $order = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$order) {
-    echo '<div class="container"><div class="alert alert-danger">Order not found</div></div>';
+    echo '<div class="container"><div class="alert alert-danger">Không tìm thấy đơn hàng</div></div>';
     include 'template/footer.php';
     exit;
 }

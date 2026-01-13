@@ -18,31 +18,42 @@ $email = '';
 $password = '';
 $type = 'Admin'; // mặc định là Admin
 
+if (!isset($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
-    $type = isset($_POST['type']) ? $_POST['type'] : 'Admin'; // nếu có select
-
-    // Kiểm tra rỗng
-    if ($username === '' || $email === '' || $password === '') {
-        $msg = '<div class="alert alert-danger">Please fill all required fields</div>';
+    if (!isset($_POST['token']) || $_POST['token'] !== $_SESSION['token']) {
+        $msg = '<div class="alert alert-danger">Mã thông báo CSRF không hợp lệ</div>';
     } else {
-        // Kiểm tra email đã tồn tại chưa
-        $stmtCheck = $db->prepare("SELECT id FROM users WHERE email = ?");
-        $stmtCheck->execute([$email]);
-        if ($stmtCheck->rowCount() > 0) {
-            $msg = '<div class="alert alert-warning">Email already exists</div>';
-        } else {
-            $stmt = $db->prepare("INSERT INTO users (username, email, pass, type) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$username, $email, $password, $type]);
-            $msg = '<div class="alert alert-success">User added successfully</div>';
+        $username = trim($_POST['username']);
+        $email = trim($_POST['email']);
+        $password = trim($_POST['password']);
+        $type = $_POST['type'] ?? 'Admin';
 
-            // Xóa giá trị input sau khi thêm thành công
-            $username = $email = $password = '';
+        // Validation
+        if ($username === '' || $email === '' || $password === '') {
+            $msg = '<div class="alert alert-danger">Vui lòng điền vào tất cả các trường</div>';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $msg = '<div class="alert alert-danger">Định dạng email không hợp lệ</div>';
+        } elseif (strlen($password) < 6) {
+            $msg = '<div class="alert alert-danger">Password phải có ít nhất 6 ký tự</div>';
+        } else {
+            $stmtCheck = $db->prepare("SELECT id FROM users WHERE email = ?");
+            $stmtCheck->execute([$email]);
+            if ($stmtCheck->rowCount() > 0) {
+                $msg = '<div class="alert alert-warning">Email đã tồn tại</div>';
+            } else {
+                $password_hashed = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $db->prepare("INSERT INTO users (username, email, pass, type) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$username, $email, $password_hashed, $type]);
+                $msg = '<div class="alert alert-success">Người dùng đã được thêm thành công</div>';
+                $username = $email = $password = '';
+            }
         }
     }
 }
+
 ?>
     <link 
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
@@ -320,7 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="d-flex align-items-center">
         <img src="images/logo.jpg" alt="logo" width="110" style="margin-right:16px">
         <div>
-          <h1 style="margin:0; font-size:46px; letter-spacing:1px;">MERCEDES SHOWROOM</h1>
+          <h1 style="margin:0; font-size:46px; letter-spacing:1px;">SHOWROOM NGOC TY</h1>
           <div style="font-size:13px; color:#666">Xe sang – Bảo hành chính hãng</div>
         </div>
       </div>
@@ -416,19 +427,20 @@ $listCate = $stmtCate->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="card shadow p-4">
         <form method="post">
+            <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
             <div class="mb-3">
                 <label class="form-label fw-bold">Username</label>
-                <input type="text" name="username" class="form-control" placeholder="Enter username">
+                <input type="text" name="username" class="form-control" placeholder="Enter username" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Email</label>
-                <input type="email" name="email" class="form-control" placeholder="Enter email">
+                <input type="email" name="email" class="form-control" placeholder="Enter email" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label fw-bold">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Enter password">
+                <input type="password" name="password" class="form-control" placeholder="Enter password" required>
             </div>
 
             <div class="mb-3">
@@ -454,7 +466,7 @@ $listCate = $stmtCate->fetchAll(PDO::FETCH_ASSOC);
 
             <!-- Cột 1 -->
             <div class="footer-col">
-                <h3>MERCEDES SHOWROOM</h3>
+                <h3>SHOWROOM NGOC TY</h3>
                 <p>Xe sang – Bảo hành chính hãng</p>
                 <p><i class="fa-solid fa-location-dot"></i>Vĩnh Long, Quốc Lộ 1A, Trường đại học Cữu Long</p>
                 <p><i class="fa-solid fa-phone"></i> 0909 999 888</p>
@@ -484,7 +496,7 @@ $listCate = $stmtCate->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div class="footer-bottom">
-            © 2025 Mercedes Showroom - All rights reserved.
+            © 2025 Showroom NGOC TY - All rights reserved.
         </div>
         
     </div>

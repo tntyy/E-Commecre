@@ -24,9 +24,9 @@ if (isset($_SESSION['admin_id']) && $_SESSION['admin_id'] == $id) {
 try {
     $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
     $stmt->execute([$id]);
-    $_SESSION['msg'] = "Admin deleted successfully";
+    $_SESSION['msg'] = "Quản trị viên đã xóa thành công";
 } catch (PDOException $e) {
-    $_SESSION['msg'] = "Cannot delete admin: " . $e->getMessage();
+    $_SESSION['msg'] = "Không thể xóa admin: " . $e->getMessage();
 }
 
 header("Location: admin.php");

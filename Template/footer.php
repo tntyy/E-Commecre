@@ -68,7 +68,7 @@
 
             <!-- Cột 1 -->
             <div class="footer-col">
-                <h3>MERCEDES SHOWROOM</h3>
+                <h3>SHOWROOM NGOC TY</h3>
                 <p>Xe sang – Bảo hành chính hãng</p>
                 <p><i class="fa-solid fa-location-dot"></i>Vĩnh Long, Quốc Lộ 1A, Trường đại học Cữu Long</p>
                 <p><i class="fa-solid fa-phone"></i> 0909 999 888</p>
@@ -98,7 +98,7 @@
         </div>
 
         <div class="footer-bottom">
-            © 2025 Mercedes Showroom - All rights reserved.
+            © 2025 Showroom NGOC TY - All rights reserved.
         </div>
         
     </div>

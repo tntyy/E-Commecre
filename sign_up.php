@@ -90,25 +90,25 @@ a:hover {
         
         <div class="form-group">
           <b>Username</b>
-          <input class="form-control" type="text" name="username" placeholder="Enter Username" value="<?php if(isset($lastname)) echo $lastname ?>" />
+          <input class="form-control" type="text" name="username" placeholder="Enter Username" value="<?php if(isset($lastname)) echo $lastname ?>" required />
           <?php if(isset($Error['lastname'])) echo $Error['lastname'] ?><br>
         </div>
         
         <div class="form-group">
           <b>Password</b>
-          <input class="form-control" type="password" name="password" placeholder="Enter Password" value="<?php if(isset($password)) echo $password ?>" />
+          <input class="form-control" type="password" name="password" placeholder="Enter Password" value="<?php if(isset($password)) echo $password ?>" required/>
           <?php if(isset($Error['password'])) echo $Error['password'] ?><br>
         </div>
         
         <div class="form-group">
           <b>Repeat Password</b>
-          <input class="form-control" type="password" name="password_repeat" placeholder="Repeat Password" value="<?php if(isset($password_repeat)) echo $password_repeat ?>" />
+          <input class="form-control" type="password" name="password_repeat" placeholder="Repeat Password" value="<?php if(isset($password_repeat)) echo $password_repeat ?>" required/>
           <?php if(isset($Error['password_repeat'])) echo $Error['password_repeat'] ?><br>
         </div>
         
         <div class="form-group">
           <b>Email</b>
-          <input class="form-control" type="text" name="email" placeholder="Enter Email" value="<?php if(isset($email)) echo $email ?>" />
+          <input class="form-control" type="text" name="email" placeholder="Enter Email" value="<?php if(isset($email)) echo $email ?>" required/>
           <?php if(isset($Error['email'])) echo $Error['email'] ?><br>
         </div>
         

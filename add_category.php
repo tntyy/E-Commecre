@@ -11,18 +11,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category_name = trim($_POST['category_name']);
 
     if ($category_name === '') {
-        $msg = '<div class="alert alert-danger">Category name is required</div>';
+        $msg = '<div class="alert alert-danger">Tên danh mục là bắt buộc</div>';
     } else {
         // Kiểm tra category đã tồn tại chưa
         $stmt = $db->prepare("SELECT id FROM category WHERE name = ?");
         $stmt->execute([$category_name]);
         if ($stmt->rowCount() > 0) {
-            $msg = '<div class="alert alert-danger">Category already exists</div>';
+            $msg = '<div class="alert alert-danger">Danh mục đã tồn tại</div>';
         } else {
             // Thêm category mới
             $stmt = $db->prepare("INSERT INTO category(name, status) VALUES(?, NOW())");
             $stmt->execute([$category_name]);
-            $msg = '<div class="alert alert-success">Category added successfully</div>';
+            $msg = '<div class="alert alert-success">Danh mục đã được thêm thành công</div>';
         }
     }
 }
@@ -310,7 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="d-flex align-items-center">
         <img src="images/logo.jpg" alt="logo" width="110" style="margin-right:16px">
         <div>
-          <h1 style="margin:0; font-size:46px; letter-spacing:1px;">MERCEDES SHOWROOM</h1>
+          <h1 style="margin:0; font-size:46px; letter-spacing:1px;">SHOWROOM NGOC TY</h1>
           <div style="font-size:13px; color:#666">Xe sang – Bảo hành chính hãng</div>
         </div>
       </div>
@@ -404,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="text" 
                                name="category_name" 
                                class="form-control"
-                               placeholder="Enter category name">
+                               placeholder="Enter category name" required>
                     </div>
 
                     <button type="submit" class="btn btn-primary">
@@ -431,7 +431,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <!-- Cột 1 -->
             <div class="footer-col">
-                <h3>MERCEDES SHOWROOM</h3>
+                <h3>SHOWROOM NGOC TY</h3>
                 <p>Xe sang – Bảo hành chính hãng</p>
                 <p><i class="fa-solid fa-location-dot"></i>Vĩnh Long, Quốc Lộ 1A, Trường đại học Cữu Long</p>
                 <p><i class="fa-solid fa-phone"></i> 0909 999 888</p>
@@ -461,7 +461,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="footer-bottom">
-            © 2025 Mercedes Showroom - All rights reserved.
+            © 2025 Showroom NGOC TY - All rights reserved.
         </div>
         
     </div>

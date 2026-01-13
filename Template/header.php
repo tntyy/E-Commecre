@@ -155,7 +155,7 @@ header .subtitle {
       <div class="d-flex align-items-center">
         <img src="images/logo.jpg" alt="logo" width="110" style="margin-right:16px">
         <div>
-          <h1 style="margin:0; font-size:46px; letter-spacing:1px;">MERCEDES SHOWROOM</h1>
+          <h1 style="margin:0; font-size:46px; letter-spacing:1px;">SHOWROOM NGOC TY</h1>
           <div style="font-size:13px; color:#666">Xe sang – Bảo hành chính hãng</div>
         </div>
       </div>

@@ -87,7 +87,7 @@ a:hover {
             <form action="login_process.php" method="post">
               <div class="text-center">
                 <h3>Login Form</h3>
-                <img width="100" height="100" src="images/human-avatar.jpg" alt="Avatar" class="avatar">
+                <img width="100" height="100" src="images/human-avatar.jpg" alt="Avatar" class="avatar" >
               </div>
               <div class="form-group">
                 <label>Email</label>

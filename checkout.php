@@ -1,6 +1,14 @@
 <?php 
+
 session_start();
 require('conn/connect.php'); // File kết nối phải ở trên cùng
+
+// Nếu chưa đăng nhập → chuyển về login
+if (!isset($_SESSION['customer']) || empty($_SESSION['customer'])) {
+    $_SESSION['redirect_after_login'] = 'checkout.php'; // lưu lại trang muốn vào
+    header("Location: login.php");
+    exit;
+}
 
 // 1. Kiểm tra đăng nhập
 if(!isset($_SESSION['customer']) || empty($_SESSION['customer'])){

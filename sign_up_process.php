@@ -15,10 +15,16 @@ if (isset($_POST['token']) && trim($_POST['token']) == trim($_SESSION['token']))
         $error['username'] = "Username không được để trống";
     if (empty($password))
         $error['password'] = "Password không được để trống";
+    else (strlen($password) < 6)
+        $error['password'] = "Password phải có ít nhất 6 ký tự";
     if (empty($password_repeat))
         $error['password_repeat'] = "Password_repeat không được để trống";
+    else ($password !== $password_repeat)
+        $error['password_repeat'] = "Password_repeat không khớp";
     if (empty($email))
         $error['email'] = "Email không được để trống";
+    else if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        $error['email'] = "Email không hợp lệ";
 
     if (!$error) {
         $password = sha1($password);
