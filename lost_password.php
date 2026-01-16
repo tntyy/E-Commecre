@@ -1,7 +1,15 @@
 <?php
+session_start();
 require 'conn/connect.php';
 include 'template/header.php';
 include 'template/nav.php';
+
+if (isset($_SESSION['msg'])) {
+    echo $_SESSION['msg'];
+    unset($_SESSION['msg']);
+}
+
+
 ?>
 <style>
    
@@ -59,8 +67,7 @@ a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 500px;
-    margin-top: 50px;
+  margin-top: 50px;
 }
 
 /* Panel */
@@ -78,37 +85,34 @@ a:hover {
 
 </style>
 <div class="chinhcss">
-    <div class="container">
-  <div class="row">
-    <div class="content-blog">
-      <div class="col-md-offset-3 col-md-6">
-        <div class="panel panel-default">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="panel">
           <div class="panel-body">
-            <form action="login_process.php" method="post">
+
+            <form action="lost_password_handle.php" method="post">
               <div class="text-center">
-                <h3>Login Form</h3>
-                <img width="100" height="100" src="images/human-avatar.jpg" alt="Avatar" class="avatar" >
+                <h3>Lost Password</h3>
+                <img width="100" height="100" src="images/human-avatar.jpg" class="avatar">
               </div>
+
               <div class="form-group">
                 <label>Email</label>
-                <input type="text" name="email" class="form-control" placeholder="Enter Email" required>
+                <input type="email" name="email" class="form-control" required>
               </div>
-              <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password" placeholder="Enter Password" class="form-control" required>
+
+              <div class="text-center mt-3">
+                <button class="btn btn-primary">Submit</button>
               </div>
-              <a href="lost_password.php">Lost Password?</a><br>
-              <button type="submit" class="btn btn-primary">Login</button>
-              <button type="button" class="btn btn-info">Cancel</button>
-              <a href="sign_up.php">Sign Up</a> (If you do not already have an account)<br>
-            </form><br>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-</div>
+
 <?php
 include 'template/footer.php';
 ?>

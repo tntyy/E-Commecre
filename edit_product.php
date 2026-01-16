@@ -444,7 +444,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
             </li>
 
-             <li class="dropdown2">
+            <li class="dropdown2">
             <a href="xoasua.php"><i class="fa-solid fa-car"></i> Cars</a>
             <div class="dropdown-content2">
                 <a href="xoasua.php"><i class="fa-solid fa-angles-right"></i>All Cars</a>
@@ -463,9 +463,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
-
-
             <?php if (isset($_SESSION['customer'])): ?>
                 <li class="dropdown2">
                     <a href="#">
@@ -473,8 +470,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?= htmlspecialchars($_SESSION['customer']) ?>
                     </a>
                     <div class="dropdown-content2">
-                        <a href="my_wishlist.php"><i class="fa-solid fa-heart"></i> Wishlist</a>
-                        <a href="edit_profile.php"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+                        <a href="my_orders_admin.php"><i class="fa-solid fa-box"></i> My Orders</a>
+                        <a href="lost_password.php"><i class="fa-solid fa-pen"></i> Lost Password</a>
                         <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 </li>
@@ -484,12 +481,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
 
-            <!-- CART -->
-            <li>
-                <a href="cart.php">
-                    <i class="fa-solid fa-cart-shopping"></i> Cart
-                </a>
-            </li>
+       
 
         </ul>
 

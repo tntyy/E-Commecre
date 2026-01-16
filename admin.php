@@ -359,6 +359,32 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 .add-admin-btn:hover {
     opacity: 0.9;
 }
+/* KHÓA TABLE KHÔNG BUNG WIDTH */
+.admin-table {
+    width: 100%;
+    table-layout: fixed; /* QUAN TRỌNG */
+}
+
+/* TẤT CẢ Ô TRONG TABLE */
+.admin-table th,
+.admin-table td {
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    max-width: 200px; /* chỉnh theo ý */
+}
+
+/* HEADER TABLE GIỐNG DÒNG ID */
+.admin-table thead {
+    background: #ffffff !important;
+}
+
+.admin-table thead th {
+    background: #ffffff !important;
+    color: #ffcc00 !important;
+    font-weight: 700;
+    border-bottom: 2px solid #ffcc00;
+}
 
 
     </style>
@@ -429,8 +455,8 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?= htmlspecialchars($_SESSION['customer']) ?>
                     </a>
                     <div class="dropdown-content2">
-                        <a href="my_wishlist.php"><i class="fa-solid fa-heart"></i> Wishlist</a>
-                        <a href="edit_profile.php"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+                        <a href="my_orders_admin.php"><i class="fa-solid fa-box"></i> My Orders</a>
+                        <a href="lost_password.php"><i class="fa-solid fa-pen"></i> Lost Password</a>
                         <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 </li>

@@ -138,6 +138,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <a href="my_orders.php"><i class="fa-solid fa-receipt"></i> My Orders</a>
                         <a href="my_wishlist.php"><i class="fa-solid fa-heart"></i> Wishlist</a>
                         <a href="edit_profile.php"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+                        <a href="update_password.php"><i class="fa-solid fa-pen"></i> Update Password</a>
                         <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 </li>

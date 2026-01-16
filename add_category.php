@@ -26,7 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
+$sql = "SELECT id, name FROM category";
+$stmt = $db->prepare($sql);
+$stmt->execute();
+$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -301,6 +304,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     font-size: 14px;
     color: #b5b5b5;
 }
+/* ===== ADD CATEGORY FORM ONLY ===== */
+.add-category-wrapper {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+.add-category-wrapper h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #2b5876;
+    margin-bottom: 30px;
+}
+
+.add-category-wrapper .form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.add-category-wrapper .form-control {
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    border: 1px solid #ddd;
+}
+
+.add-category-wrapper .form-control:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25);
+}
+
+.add-category-wrapper .btn-primary {
+    background: linear-gradient(135deg, #ffcc00, #f7b500);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: 30px;
+}
+
+.add-category-wrapper .btn-primary:hover {
+    opacity: 0.9;
+}
+
+.add-category-wrapper .btn-secondary {
+    border-radius: 30px;
+    padding: 12px 28px;
+}
+
+.add-category-wrapper .alert {
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+
 
     </style>
 </head>
@@ -335,7 +395,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
             </li>
 
-             <li class="dropdown2">
+            <li class="dropdown2">
             <a href="xoasua.php"><i class="fa-solid fa-car"></i> Cars</a>
             <div class="dropdown-content2">
                 <a href="xoasua.php"><i class="fa-solid fa-angles-right"></i>All Cars</a>
@@ -353,6 +413,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </li>
 
 
+
             <?php if (isset($_SESSION['customer'])): ?>
                 <li class="dropdown2">
                     <a href="#">
@@ -360,8 +421,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?= htmlspecialchars($_SESSION['customer']) ?>
                     </a>
                     <div class="dropdown-content2">
-                        <a href="my_wishlist.php"><i class="fa-solid fa-heart"></i> Wishlist</a>
-                        <a href="edit_profile.php"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+                        <a href="my_orders_admin.php"><i class="fa-solid fa-box"></i> My Orders</a>
+                        <a href="lost_password.php"><i class="fa-solid fa-pen"></i> Lost Password</a>
                         <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 </li>
@@ -385,7 +446,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-<div class="container" style="padding: 40px 20px; max-width: 1300px; margin: 0 auto;">
+<div class="container add-category-wrapper" style="padding: 40px 20px; max-width: 700px; margin: 40px auto;">
 
     <h1 style="text-align:center; font-size:42px; color:#2b5876; margin:30px 0;">
          ADD CATEGORY

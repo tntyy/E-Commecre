@@ -6,12 +6,16 @@
 <?php
 require 'conn/connect.php';
 $db = Database::getInstance();
-
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // Lấy ID admin từ GET
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     echo "Invalid admin ID";
     exit;
 }
+
+
 
 $id = (int)$_GET['id'];
 
@@ -40,6 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header("Location: edit_admin.php?id=" . $id);
     exit;
 }
+
+$sql = "SELECT id, name FROM category";
+$stmt = $db->prepare($sql);
+$stmt->execute();
+$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 
@@ -447,9 +456,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-
-
-
             <?php if (isset($_SESSION['customer'])): ?>
                 <li class="dropdown2">
                     <a href="#">
@@ -457,9 +463,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?= htmlspecialchars($_SESSION['customer']) ?>
                     </a>
                     <div class="dropdown-content2">
-                        <a href="my_orders.php"><i class="fa-solid fa-receipt"></i> My Orders</a>
-                        <a href="my_wishlist.php"><i class="fa-solid fa-heart"></i> Wishlist</a>
-                        <a href="edit_profile.php"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+                        <a href="my_orders_admin.php"><i class="fa-solid fa-box"></i> My Orders</a>
+                        <a href="lost_password.php"><i class="fa-solid fa-pen"></i> Lost Password</a>
                         <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 </li>
@@ -470,11 +475,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             <!-- CART -->
-            <li>
-                <a href="cart.php">
-                    <i class="fa-solid fa-cart-shopping"></i> Cart
-                </a>
-            </li>
+          
 
         </ul>
 

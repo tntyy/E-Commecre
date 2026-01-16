@@ -10,13 +10,25 @@ if (session_status() === PHP_SESSION_NONE) {
 require 'conn/connect.php';
 $db = Database::getInstance();
 
-function brandKey($name) {
-    return strtolower(str_replace(' ', '', $name));}
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 
-$sql = "SELECT id, name FROM category";
+$sql = "
+    SELECT 
+        o.id,
+        o.uid,
+        o.orderstatus,
+        o.paymentmode,
+        o.created_at,
+        COALESCE(SUM(oi.pquantity * oi.productprice), 0) AS real_total
+    FROM orders o
+    LEFT JOIN orderitems oi ON o.id = oi.orderid
+    GROUP BY o.id
+    ORDER BY o.created_at DESC
+";
+
 $stmt = $db->prepare($sql);
 $stmt->execute();
-$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
     <link 
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
@@ -286,23 +298,32 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     color: #b5b5b5;
 }
 
-/* ===== ADMIN TABLE STYLE ===== */
+/* ===== ADMIN TABLE ===== */
 .admin-table {
-    border-radius: 14px;
-    overflow: hidden;
     background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 .admin-table thead {
-    background: linear-gradient(135deg, #111, #333);
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #fff;
 }
 
 .admin-table thead th {
-    color: #ffcc00;
     font-weight: 600;
     text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    padding: 14px;
+}
+
+.admin-table tbody td {
+    padding: 14px;
     font-size: 14px;
-    border: none;
+    color: #333;
+    vertical-align: middle;
 }
 
 .admin-table tbody tr {
@@ -310,46 +331,34 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 .admin-table tbody tr:hover {
-    background: #f2f6ff;
-    transform: scale(1.002);
+    background: #f4f8ff;
+    transform: scale(1.005);
 }
 
-.admin-table td {
-    vertical-align: middle;
-    font-size: 15px;
-    color: #333;
+/* Password hidden */
+.admin-pass {
+    font-family: monospace;
+    letter-spacing: 2px;
 }
 
-.admin-table td:first-child {
-    font-weight: 600;
-    color: #2b5876;
-}
-
-/* BUTTON ACTION */
-.btn-action {
+/* Action buttons */
+.admin-actions a {
     padding: 6px 14px;
-    font-size: 13px;
     border-radius: 20px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 500;
 }
 
-.btn-edit {
-    background: #0d6efd;
-    color: #fff;
+.admin-actions .btn-primary {
+    background: #2a5298;
+    border: none;
 }
 
-.btn-edit:hover {
-    background: #084298;
+.admin-actions .btn-danger {
+    background: #c0392b;
+    border: none;
 }
 
-.btn-delete {
-    background: #dc3545;
-    color: #fff;
-}
-
-.btn-delete:hover {
-    background: #a71d2a;
-}
 /* Add button */
 .add-admin-btn {
     background: linear-gradient(135deg, #11998e, #38ef7d);
@@ -362,6 +371,21 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 .add-admin-btn:hover {
     opacity: 0.9;
 }
+/* KHÓA TABLE KHÔNG BUNG WIDTH */
+.admin-table {
+    width: 100%;
+    table-layout: fixed; /* QUAN TRỌNG */
+}
+
+/* TẤT CẢ Ô TRONG TABLE */
+.admin-table th,
+.admin-table td {
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+    max-width: 200px; /* chỉnh theo ý */
+}
+
 /* HEADER TABLE GIỐNG DÒNG ID */
 .admin-table thead {
     background: #ffffff !important;
@@ -410,7 +434,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </li>
 
             <li class="dropdown2">
-                <a href="#"><i class="fa-solid fa-folder"></i> Category</a>
+                <a href="category.php"><i class="fa-solid fa-folder"></i> Category</a>
                     <div class="dropdown-content2">
                         <a href="category.php"><i class="fa-solid fa-receipt"></i>View Category</a>
                         <a href="add_category.php"><i class="fa-solid fa-heart"></i>Add Category</a>
@@ -436,7 +460,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 
-           <?php if (isset($_SESSION['customer'])): ?>
+            <?php if (isset($_SESSION['customer'])): ?>
                 <li class="dropdown2">
                     <a href="#">
                         <i class="fa-solid fa-user"></i>
@@ -444,7 +468,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </a>
                     <div class="dropdown-content2">
                         <a href="my_orders_admin.php"><i class="fa-solid fa-box"></i> My Orders</a>
-                        <a href="lost_password.php"><i class="fa-solid fa-pen"></i> Lost Password</a>
+                        <a href="lost_password.php"><i class="fa-solid fa-heart"></i> Lost Password</a>
                         <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 </li>
@@ -453,8 +477,9 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <li><a href="sign_up.php">Register</a></li>
             <?php endif; ?>
 
+          
+            
 
-         
         </ul>
 
         </div>
@@ -462,62 +487,81 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 
-<?php
-$stmtCate = $db->prepare("SELECT * FROM category ORDER BY id ASC");
-$stmtCate->execute();
-$listCate = $stmtCate->fetchAll(PDO::FETCH_ASSOC);
-?>
+<div class="container my-5">
+    <h2 class="mb-4 text-center">
+        <?= $isAdmin ? 'ALL ORDERS (ADMIN)' : 'MY ORDERS' ?>
+    </h2>
 
+    <?php if ($orders): ?>
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
 
-<div class="container" style="padding: 40px 20px; max-width: 1300px; margin: 0 auto;">
-
-    <h1 style="text-align:center; font-size:42px; color:#2b5876; margin:30px 0;">
-         CATEGORY
-
-    </h1>
-            <div class="card shadow mt-4">
-            <div class="card-body">
-
-                <a href="add_category.php" class="btn add-admin-btn mb-3">
-                    + Add Category
-                </a>
-
-                <table class="table admin-table text-center align-middle shadow-sm">
-                    <thead class="table-light">
-                        <tr>
-                            <th width="10%">ID</th>
-                            <th>Category Name</th>
-                            <th width="25%">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php if (!empty($listCate)): ?>
-                        <?php foreach ($listCate as $c): ?>
-                            <tr>
-                                <td><?= $c['id'] ?></td>
-                                <td><?= htmlspecialchars($c['name']) ?></td>
-                                <td>
-                                    <a href="edit_category.php?id=<?= $c['id'] ?>" class="btn btn-action btn-edit me-2">
-                                        Edit
-                                    </a>
-                                    <a href="delete_category.php?id=<?= $c['id'] ?>" 
-                                    class="btn btn-action btn-delete"
-                                    onclick="return confirm('Delete this category?')">
-                                        Delete
-                                    </a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="3">No category found</td>
-                        </tr>
+                    <?php if ($isAdmin): ?>
+                        <th>User</th>
                     <?php endif; ?>
-                    </tbody>
-                </table>
 
-            </div>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            <?php foreach ($orders as $order): ?>
+                <tr>
+                    <td><?= $order['id'] ?></td>
+
+                    <?php if ($isAdmin): ?>
+                        <td><?= htmlspecialchars($order['username']) ?></td>
+                    <?php endif; ?>
+
+                    <td>
+                        <?= number_format($order['real_total'], 0, ',', '.') ?> VND
+                    </td>
+
+                    <td>
+                        <span class="badge 
+                            <?= $order['orderstatus'] === 'Order placed' ? 'bg-warning text-dark' : 'bg-success' ?>">
+                            <?= htmlspecialchars($order['orderstatus']) ?>
+                        </span>
+                    </td>
+
+                    <td><?= htmlspecialchars($order['paymentmode']) ?></td>
+
+                    <td><?= $order['created_at'] ?></td>
+
+                    <td>
+                        <a href="order_detail.php?id=<?= $order['id'] ?>" 
+                           class="btn btn-info btn-sm mb-1">
+                            View
+                        </a>
+
+                        <?php if (!$isAdmin && $order['orderstatus'] === 'Order placed'): ?>
+                            <a href="cancel_order.php?id=<?= $order['id'] ?>"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Bạn chắc chắn muốn hủy đơn hàng này?')">
+                                Cancel
+                            </a>
+                        <?php elseif ($isAdmin): ?>
+                            <span class="badge bg-primary">Admin</span>
+                        <?php else: ?>
+                            <span class="text-muted">Not allowed</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+
+    <?php else: ?>
+        <div class="alert alert-warning text-center">
+            Không có đơn hàng nào.
         </div>
+    <?php endif; ?>
 </div>
 
 <footer class="merc-footer">

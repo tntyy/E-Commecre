@@ -398,6 +398,17 @@ if ($category_id > 0) {
     opacity: 0.9;
 }
 
+/* HEADER TABLE GIỐNG DÒNG ID */
+.admin-table thead {
+    background: #ffffff !important;
+}
+
+.admin-table thead th {
+    background: #ffffff !important;
+    color: #ffcc00 !important;
+    font-weight: 700;
+    border-bottom: 2px solid #ffcc00;
+}
 
 
     </style>
@@ -442,7 +453,7 @@ if ($category_id > 0) {
                     </div>
             </li>
 
-            <li class="dropdown2">
+             <li class="dropdown2">
             <a href="xoasua.php"><i class="fa-solid fa-car"></i> Cars</a>
             <div class="dropdown-content2">
                 <a href="xoasua.php"><i class="fa-solid fa-angles-right"></i>All Cars</a>
@@ -461,9 +472,6 @@ if ($category_id > 0) {
 
 
 
-
-
-
             <?php if (isset($_SESSION['customer'])): ?>
                 <li class="dropdown2">
                     <a href="#">
@@ -471,8 +479,8 @@ if ($category_id > 0) {
                         <?= htmlspecialchars($_SESSION['customer']) ?>
                     </a>
                     <div class="dropdown-content2">
-                        <a href="my_wishlist.php"><i class="fa-solid fa-heart"></i> Wishlist</a>
-                        <a href="edit_profile.php"><i class="fa-solid fa-pen"></i> Edit Profile</a>
+                        <a href="my_orders_admin.php"><i class="fa-solid fa-box"></i> My Orders</a>
+                        <a href="lost_password.php"><i class="fa-solid fa-pen"></i> Lost Password</a>
                         <a href="logout.php"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 </li>
